@@ -377,25 +377,24 @@ require('lazy').setup({
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
 
-    -- [[ Configure Telescope ]]
-    -- See `:help telescope` and `:help telescope.setup()`
-    require('telescope').setup {
-      -- You can put your default mappings / updates / etc. in here
-      --  All the info you're looking for is in `:help telescope.setup()`
-      --
-      -- defaults = {
-      --   mappings = {
-      --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-      --   },
-      -- },
-      -- pickers = {}
-      extensions = {
-        ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
+      -- [[ Configure Telescope ]]
+      -- See `:help telescope` and `:help telescope.setup()`
+      require('telescope').setup {
+        -- You can put your default mappings / updates / etc. in here
+        --  All the info you're looking for is in `:help telescope.setup()`
+        --
+        -- defaults = {
+        --   mappings = {
+        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        --   },
+        -- },
+        -- pickers = {}
+        extensions = {
+          ['ui-select'] = {
+            require('telescope.themes').get_dropdown(),
+          },
         },
-      },
-    }
-
+      }
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
@@ -1001,6 +1000,11 @@ end, { noremap = true, silent = true, desc = 'Open files menu (Neotree)' })
 
 vim.keymap.set('n', '<leader>gp', ':Gitsigns preview_hunk<CR>', { noremap = true, silent = true, desc = 'Git - preview code diff' })
 vim.keymap.set('n', '<leader>gt', ':Gitsigns toggle_current_line_blame<CR>', { noremap = true, silent = true, desc = 'Git - line info' })
+--Move tabs using F5/F6 or Shift+←/→
+vim.api.nvim_set_keymap('n', '<F5>', ':tabprev<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F6>', ':tabnext<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<S-Left>', ':tabprev<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<S-Right>', ':tabnext<CR>', { noremap = true, silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
