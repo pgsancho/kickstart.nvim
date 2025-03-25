@@ -993,6 +993,7 @@ require('lazy').setup({
     },
   },
 })
+
 --Custom keymaps
 vim.keymap.set('n', '<leader>e', function()
   vim.cmd 'Neotree toggle'
@@ -1000,11 +1001,33 @@ end, { noremap = true, silent = true, desc = 'Open files menu (Neotree)' })
 
 vim.keymap.set('n', '<leader>gp', ':Gitsigns preview_hunk<CR>', { noremap = true, silent = true, desc = 'Git - preview code diff' })
 vim.keymap.set('n', '<leader>gt', ':Gitsigns toggle_current_line_blame<CR>', { noremap = true, silent = true, desc = 'Git - line info' })
+
 --Move tabs using F5/F6 or Shift+←/→
 vim.api.nvim_set_keymap('n', '<F5>', ':tabprev<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F6>', ':tabnext<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<S-Left>', ':tabprev<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<S-Right>', ':tabnext<CR>', { noremap = true, silent = true })
+
+--Search for files and grep with the same shortcuts as VSCode
+vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, { desc = '[C]trl-[P] Find Files' })
+vim.keymap.set('n', '<C-f>', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+
+--Line at 120 characteres and jump line
+vim.opt.colorcolumn = '120'
+vim.cmd 'highlight ColorColumn ctermbg=darkgray guibg=gray'
+vim.opt.textwidth = 120
+vim.opt.wrap = true
+vim.opt.linebreak = true
+
+--Create and highlight empty line at EOF
+vim.opt.fixeol = true
+vim.opt.scrolloff = 1
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*',
+  callback = function()
+    vim.cmd 'highlight EndOfBuffer guifg=gray ctermfg=gray'
+  end,
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
