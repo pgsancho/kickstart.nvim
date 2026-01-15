@@ -844,7 +844,8 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        --preset = 'default',
+        preset = 'super-tab', --to auto-complete using "<tab>"
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1028,3 +1029,22 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- Limit column for C/C++
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'c', 'cpp', 'h' },
+  callback = function()
+    vim.opt_local.textwidth = 80 -- Auto-wrap at 80 columnas
+    vim.opt_local.colorcolumn = '80' -- Visual line at column 80
+  end,
+})
+
+-- Limit column for commit messages
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'gitcommit',
+  callback = function()
+    vim.opt_local.colorcolumn = '50,72' -- 50 for commit titles and 72 for the body
+    vim.opt_local.textwidth = 72
+    vim.opt_local.spell = true
+  end,
+})
