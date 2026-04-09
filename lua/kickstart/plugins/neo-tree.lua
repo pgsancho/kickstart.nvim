@@ -15,6 +15,7 @@ return {
   },
   opts = {
     filesystem = {
+      hijack_netrw_behavior = 'disabled', -- Not open neo-tree by default when opening neo-vim
       window = {
         mappings = {
           ['\\'] = 'close_window',
@@ -23,3 +24,6 @@ return {
     },
   },
 }
+
+-- Useful commands:
+-- 'H': toggle hidden files (like .gitignored or Git submodules)

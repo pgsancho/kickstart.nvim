@@ -680,6 +680,34 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        -- NOTE: How to work in C/C++ projects with clangd
+        --
+        -- For C/C++ projects, clangd provides advanced features like:
+        --   - Syntax highlighting (via semantic tokens)
+        --   - Go to definition/declaration
+        --   - Code completion with types from external libraries
+        --   - Find references
+        --   - Hover information
+        --
+        -- clangd needs to know where to find external headers (like GStreamer, custom libraries, etc.)
+        -- It reads this information from a file called `compile_commands.json`
+        --
+        -- How to set it up:
+        --   1. Build your project with your build system (Meson, CMake, etc.)
+        --      - Meson: generates `build/compile_commands.json` or `builddir/compile_commands.json`
+        --      - CMake: run with `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
+        --
+        --   2. Create a symbolic link in your project root:
+        --      ```bash
+        --      cd /path/to/your/project
+        --      ln -sf builddir/compile_commands.json compile_commands.json
+        --      ```
+        --
+        --   3. Restart LSP in Neovim: `:LspRestart` or reopen the file
+        --
+        -- Without compile_commands.json, clangd works in "degraded mode" and cannot resolve
+        -- external headers, causing missing syntax highlighting and broken navigation in header files.
+        --
         clangd = {},
         -- gopls = {},
         -- pyright = {},
@@ -895,11 +923,12 @@ require('lazy').setup({
     -- 'folke/tokyonight.nvim',
     -- 'rebelot/kanagawa.nvim',
     -- 'EdenEast/nightfox.nvim',
-    'ellisonleao/gruvbox.nvim',
+    -- 'ellisonleao/gruvbox.nvim',
+    'Mofiqul/vscode.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
-      require('gruvbox').setup {
+      require('vscode').setup {
         terminal_colors = true,
         inverse = true,
         contrast = 'hard',
@@ -909,7 +938,7 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       -- vim.cmd.colorscheme 'kanagawa-dragon'
-      vim.cmd.colorscheme 'gruvbox'
+      vim.cmd.colorscheme 'vscode'
     end,
   },
 
@@ -989,11 +1018,11 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line', -- Line that shows different identiations
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.autopairs', -- Automatically close when opening a '"', '{' or '['
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -1048,3 +1077,8 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.spell = true
   end,
 })
+
+-- Custom remaps
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', '<leader>cd', ':Ex<CR>')
